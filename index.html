@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <h1 id="title">Rock, Paper, Scissor (Pokemon Edition)</h1>
+    <main>
+      <div class="gameboy-container">
+        <div id="gameDisplay">
+          <img class="scene" src="img/arena.jpg" alt="Arena" />
+
+          <div class="player-container">
+            <img class="player myself" src="img/player.png" alt="Player" />
+            <img class="player computer" src="img/pikachu.png" alt="Pikachu" />
+          </div>
+
+          <!-- Text Field -->
+          <div class="text-field">
+            <p class="text-shown"></p>
+          </div>
+
+          <!-- Player Info -->
+          <div class="player-stats-con">
+            <div class="player-info">
+              <div class="character-bar">
+                <span class="player-data">PLAYER 1</span>
+                <span class="player-data">Lv 3</span>
+              </div>
+              <div class="experience-data">
+                <div class="hp-text">HP:</div>
+                <div class="lifebar-container">
+                  <div class="lifebar" id="player1-lifebar"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-info">
+              <div class="character-bar">
+                <span class="player-data">PIKACHU</span>
+                <span class="player-data">Lv 103</span>
+              </div>
+              <div class="experience-data">
+                <div class="hp-text">HP:</div>
+                <div class="lifebar-container">
+                  <div class="lifebar" id="player2-lifebar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game Field -->
+          <div class="gamefield">
+            <div class="play-buttons" data-index="0"></div>
+            <div class="play-buttons" data-index="1"></div>
+            <div class="play-buttons" data-index="2"></div>
+
+            <div class="play-buttons" data-index="3"></div>
+            <div class="play-buttons" data-index="4"></div>
+            <div class="play-buttons" data-index="5"></div>
+
+            <div class="play-buttons" data-index="6"></div>
+            <div class="play-buttons" data-index="7"></div>
+            <div class="play-buttons" data-index="8"></div>
+          </div>
+        </div>
+
+        <!-- Menu -->
+        <div class="menu">
+          <div class="menu-buttons">
+            <button class="control-btn" id="gameStart">
+              <i class="game-start icon">&#x25B6; Start</i>
+            </button>
+            <button class="control-btn" id="mute-btn">
+              <i class="sound-up icon">&#128266;</i>
+              <!-- speaker icon -->
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battle Music (fix ID typo) -->
+      <audio id="battle-music" src="audio/battleMusic.mp3"></audio>
+    </main>
+
+    <script src="index.js"></script>
+  </body>
+</html>
