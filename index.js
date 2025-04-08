@@ -1,5 +1,5 @@
 /* -----------------------------------
-   🎮 Gameboard Module
+    Gameboard Module
 ----------------------------------- */
 const Gameboard = (() => {
   let board = ["", "", "", "", "", "", "", "", ""];
@@ -22,14 +22,14 @@ const Gameboard = (() => {
 })();
 
 /* -----------------------------------
-   👤 Player Factory Function
+    Player Factory Function
 ----------------------------------- */
 const Player = (name = "Player", marker = "X", score = 0) => {
   return { name, marker, score };
 };
 
 /* -----------------------------------
-   🖥️ Display Controller Module
+    Display Controller Module
 ----------------------------------- */
 const DisplayController = (() => {
   // elements
@@ -147,7 +147,7 @@ const GameController = (() => {
       DisplayController.updateScoreboard(player1, player2);
 
       if (currentPlayer.score >= 2) {
-        // 🎉 Final win condition
+        //  Final win condition
         DisplayController.displayMessage(
           `${currentPlayer.name} wins the match!`
         );
@@ -229,7 +229,7 @@ const GameController = (() => {
 })();
 
 /* -----------------------------------
-   🎵 Music Controls
+    Music Controls
 ----------------------------------- */
 const battleMusic = document.getElementById("battle-music");
 const muteBtn = document.getElementById("mute-btn");
@@ -253,7 +253,7 @@ muteBtn.onclick = () => {
 };
 
 /* -----------------------------------
-   🚀 Initial Game Setup
+    Initial Game Setup
 ----------------------------------- */
 DisplayController.render();
 DisplayController.displayMessage("ASH START'S");
