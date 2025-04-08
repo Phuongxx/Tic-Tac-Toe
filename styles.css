@@ -1,3 +1,8 @@
+@font-face {
+  font-family: Pixelify Sans;
+  src: url(fonts/PixelifySans-VariableFont_wght.ttf);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -89,6 +94,7 @@ main {
   border-radius: 50%;
   background: rgb(138, 138, 138);
   border: none;
+  color: black;
 }
 .control-btn:hover {
   background-color: rgb(120, 120, 120);
