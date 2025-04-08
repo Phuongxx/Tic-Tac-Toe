@@ -174,19 +174,6 @@ main {
   transition: width 0.5s ease;
   border-radius: 4px;
 }
-
-.left-con {
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-right: solid 1px black;
-}
-
-.right-con {
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border-left: solid 1px black;
-}
-
 /* textField */
 .text-field {
   display: block;
