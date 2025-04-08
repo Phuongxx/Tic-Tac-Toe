@@ -18,11 +18,7 @@ const Gameboard = (() => {
     board = ["", "", "", "", "", "", "", "", ""];
   };
 
-  return {
-    getBoard,
-    setMark,
-    reset,
-  };
+  return { getBoard, setMark, reset };
 })();
 
 /* -----------------------------------
@@ -33,6 +29,100 @@ const Player = (name = "Player", marker = "X", score = 0) => {
 };
 
 /* -----------------------------------
+   🖥️ Display Controller Module
+----------------------------------- */
+const DisplayController = (() => {
+  // elements
+  const boardEl = document.querySelector(".gamefield");
+  const messageEl = document.querySelector(".text-shown");
+  const scoreboardEl = document.querySelector(".scoreboard");
+  const startBtn = document.getElementById("gameStart");
+  const restartBtn = document.getElementById("restart-btn");
+  const lifebar1 = document.getElementById("player1-lifebar");
+  const lifebar2 = document.getElementById("player2-lifebar");
+
+  // Render the current gameboard
+  const render = () => {
+    const boardState = Gameboard.getBoard();
+    const cells = boardEl.querySelectorAll(".play-buttons");
+
+    cells.forEach((cell, index) => {
+      cell.textContent = boardState[index];
+      cell.removeEventListener("click", handleClick);
+      cell.addEventListener("click", () => handleClick(index));
+    });
+  };
+
+  // Handle cell click
+  const handleClick = (index) => {
+    GameController.playTurn(index);
+  };
+
+  // Show game messages
+  const displayMessage = (msg) => {
+    messageEl.textContent = msg;
+  };
+
+  // Update scoreboard display
+  const updateScoreboard = (p1, p2) => {
+    scoreboardEl.textContent = `${p1.name}: ${p1.score} | ${p2.name}: ${p2.score}`;
+  };
+
+  // Reset both lifebars to 100%
+  const resetHealthBars = () => {
+    hp1 = 100;
+    hp2 = 100;
+    lifebar1.style.width = "100%";
+    lifebar2.style.width = "100%";
+  };
+
+  // Set losing player's lifebar to 0%
+  const updateHealthBar = (playerNumber) => {
+    if (playerNumber === 1) {
+      hp1 = 0;
+      lifebar1.style.width = "0%";
+    } else if (playerNumber === 2) {
+      hp2 = 0;
+      lifebar2.style.width = "0%";
+    }
+  };
+
+  // Start button
+  startBtn.addEventListener("click", () => {
+    GameController.restart();
+    GameController.reset();
+    DisplayController.displayMessage("ASH START'S");
+
+    const gameDisplay = document.getElementById("gameDisplay");
+    gameDisplay.classList.add("started");
+
+    // 🔊 Start music
+    battleMusic.currentTime = 0;
+    battleMusic.play();
+  });
+  restartBtn.addEventListener("click", () => {
+    GameController.reset();
+    GameController.restart();
+    DisplayController.displayMessage("ASH START'S");
+
+    const gameDisplay = document.getElementById("gameDisplay");
+    gameDisplay.classList.add("started");
+
+    // 🔁 Restart
+    battleMusic.currentTime = 0;
+    battleMusic.play();
+  });
+
+  return {
+    render,
+    displayMessage,
+    updateScoreboard,
+    updateHealthBar,
+    resetHealthBars,
+  };
+})();
+
+/* -----------------------------------
    🕹️ Game Controller Module
 ----------------------------------- */
 const GameController = (() => {
@@ -41,6 +131,7 @@ const GameController = (() => {
   let currentPlayer = player1;
   let gameOver = false;
 
+  // Reset players and scores
   const reset = () => {
     player1 = Player("ASH", "X");
     player2 = Player("PIKACHU", "O");
@@ -49,19 +140,23 @@ const GameController = (() => {
     gameOver = false;
   };
 
+  // Update score and show win message
   const updateScores = (result) => {
     if (result === "win") {
       currentPlayer.score++;
       DisplayController.updateScoreboard(player1, player2);
 
-      if (currentPlayer.score >= 1) {
+      if (currentPlayer.score >= 2) {
+        // 🎉 Final win condition
         DisplayController.displayMessage(
           `${currentPlayer.name} wins the match!`
         );
+        gameOver = true;
       }
     }
   };
 
+  // Player makes a move
   const playTurn = (index) => {
     if (gameOver) return;
 
@@ -73,21 +168,35 @@ const GameController = (() => {
         DisplayController.displayMessage(`${currentPlayer.name} wins!`);
         updateScores("win");
         DisplayController.updateHealthBar(currentPlayer === player1 ? 2 : 1);
+
+        if (currentPlayer.score < 2) {
+          // 🔁 Only restart if match not finished
+          setTimeout(() => {
+            restart();
+          }, 1000);
+        }
       } else if (Gameboard.getBoard().every((cell) => cell !== "")) {
         gameOver = true;
         DisplayController.displayMessage("It's a draw!");
         updateScores("draw");
+
+        // Draws don't count as final win, so restart always
+        setTimeout(() => {
+          restart();
+        }, 1000);
       } else {
         switchPlayer();
       }
     }
   };
 
+  // Switch to the other player
   const switchPlayer = () => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
     DisplayController.displayMessage(`${currentPlayer.name}'s turn`);
   };
 
+  // Check for win patterns
   const checkWinner = () => {
     const b = Gameboard.getBoard();
     const winPatterns = [
@@ -100,11 +209,13 @@ const GameController = (() => {
       [0, 4, 8],
       [2, 4, 6],
     ];
+
     return winPatterns.some(([a, b1, c]) => {
       return b[a] && b[a] === b[b1] && b[a] === b[c];
     });
   };
 
+  // Restart board for new round
   const restart = () => {
     Gameboard.reset();
     currentPlayer = player1;
@@ -118,91 +229,19 @@ const GameController = (() => {
 })();
 
 /* -----------------------------------
-   🖥️ Display Controller Module
------------------------------------ */
-const DisplayController = (() => {
-  const boardEl = document.querySelector(".gamefield");
-  const messageEl = document.querySelector(".text-shown");
-  const startBtn = document.getElementById("gameStart");
-
-  const lifebar1 = document.getElementById("player1-lifebar");
-  const lifebar2 = document.getElementById("player2-lifebar");
-
-  // Render board state to UI
-  const render = () => {
-    const boardState = Gameboard.getBoard();
-    const cells = boardEl.querySelectorAll(".play-buttons");
-
-    cells.forEach((cell, index) => {
-      cell.textContent = boardState[index];
-      cell.removeEventListener("click", handleClick); // Remove old listeners
-      cell.addEventListener("click", () => handleClick(index)); // Add new one
-    });
-  };
-
-  // shown, when board cell is clicked
-  const handleClick = (index) => {
-    GameController.playTurn(index);
-  };
-
-  // Show in-game messages
-  const displayMessage = (msg) => {
-    messageEl.textContent = msg;
-  };
-
-  // Reset lifebars
-  const resetHealthBars = () => {
-    hp1 = 100;
-    hp2 = 100;
-    lifebar1.style.width = "100%";
-    lifebar2.style.width = "100%";
-  };
-
-  // Reduce enemy HP on loss
-  const updateHealthBar = (playerNumber) => {
-    if (playerNumber === 1) {
-      hp1 = 0; //
-      lifebar1.style.width = "0%"; //
-    } else if (playerNumber === 2) {
-      hp2 = 0;
-      lifebar2.style.width = "0%"; //
-    }
-  };
-
-  const updateScoreboard = (p1, p2) => {};
-
-  // Game Start button
-  startBtn.addEventListener("click", () => {
-    GameController.restart();
-    GameController.reset();
-
-    const gameDisplay = document.getElementById("gameDisplay");
-    gameDisplay.classList.add("started"); // Hide overlay
-  });
-
-  return {
-    render,
-    displayMessage,
-    updateScoreboard,
-    updateHealthBar,
-    resetHealthBars,
-  };
-})();
-
-/* -----------------------------------
    🎵 Music Controls
 ----------------------------------- */
 const battleMusic = document.getElementById("battle-music");
 const muteBtn = document.getElementById("mute-btn");
 const muteBtnIcon = muteBtn.querySelector("i");
 
-// Loop music when it ends
+// Loop music
 battleMusic.addEventListener("ended", () => {
   battleMusic.currentTime = 0;
   battleMusic.play();
 });
 
-// Mute/Unmute toggle
+// Toggle mute/unmute
 muteBtn.onclick = () => {
   muteBtnIcon.classList.toggle("sound-mute");
   muteBtnIcon.classList.toggle("sound-up");
